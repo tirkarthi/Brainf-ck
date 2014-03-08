@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use List::Util qw /min/;
+
+sub is_prime{
+    my $number = shift;
+    for(2..sqrt($number)){
+	return 0 if ($number % $_ == 0);
+    }
+    return 1;
+}
+
+sub factorise{
+    my ($num, $count) = @_;
+    if(is_prime($num)){
+	factorise($num+1, $count); print ">-<";
+    }
+    else{
+	my %div = map{ $_ , $num / $_ } grep { $num % $_ == 0 } (2..$num/2);
+	my @sum_of_factors;
+	my ($k , $v) = (0,0);
+	push @sum_of_factors , ($_ + $div{$_}) for(keys %div);
+	my $min_sum = min @sum_of_factors ;
+	each %div;
+	for(($k, $v) = each %div){
+	    last if ($k + $v == $min_sum);
+	}
+	print "+" x $k , "[>", "+" x $v, "<-]";
+    }
+}
+
+print "Enter the input : \n";
+chomp(my $input = <STDIN>);
+my @char = map { ord } split //, $input;
+my $min_char = min @char ;
+my $count = 0;
+print "#\tStart of Brainfuck code\t#\n";
+factorise($min_char, $count);
+print ">[";
+print ">" , "+" x ($_ / $min_char) for(@char);
+print "<" x @char, "-]";
+print ">", "+" x ($_ % $min_char) , "." for(@char);
+print "\n";
+print "#\tEnd of brainfuck code\t#\n\n";
+print "*" x 11, " Powered by Perl ", "*" x 11 , "\n";
